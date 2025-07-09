@@ -18,17 +18,31 @@ Cette application web, construite avec Spring Boot, permet aux utilisateurs de s
 
 *   **Backend** : Spring Boot 3.5.3
     *   Spring Web
+    *   Spring WebFlux (pour `WebClient`)
     *   Spring Data JPA
     *   Thymeleaf (moteur de template côté serveur)
 *   **Base de données** : H2 (en mémoire, pour le développement)
+*   **Appels API Externe** :
+    *   `WebClient` pour appeler l'API OpenAI (ChatGPT).
 *   **Frontend (Styling & Base)** :
     *   HTML5, CSS3
     *   Material Icons (via Google Fonts)
     *   Police Roboto (via Google Fonts)
     *   JavaScript simple pour interactions de base
 *   **Build Tool** : Maven
-*   **Tests** : JUnit 5, Mockito
+*   **Tests** : JUnit 5, Mockito, `MockWebServer` (pour tester `ChatGptService`)
 *   **CI** : GitHub Actions (compilation et packaging)
+
+## Configuration (dans `src/main/resources/application.properties`)
+
+*   **OpenAI API Key**:
+    `openai.api.key=`
+    (Doit être configurée avec une clé valide pour que les appels réels à ChatGPT fonctionnent. Si laissée vide ou avec la valeur placeholder `SIMULATED_KEY_PLACEHOLDER`, le service `ChatGptService` retournera une réponse simulée.)
+*   **OpenAI API URL**:
+    `openai.api.url=https://api.openai.com/v1`
+*   **OpenAI Model**:
+    `openai.model=gpt-3.5-turbo`
+*   Autres configurations JPA, H2 Console, et logging.
 
 ## Structure du Projet (Principaux Répertoires)
 
@@ -40,11 +54,13 @@ Cette application web, construite avec Spring Boot, permet aux utilisateurs de s
 │   ├── main
 │   │   ├── java/com/example/mediagenerator
 │   │   │   ├── MediaGeneratorApplication.java  # Classe principale Spring Boot
+│   │   │   ├── config/                       # Configurations Spring (ex: AppConfig pour WebClient)
 │   │   │   ├── controller/                   # Contrôleurs Web
-│   │   │   ├── dto/                          # Data Transfer Objects
+│   │   │   ├── dto/                          # Data Transfer Objects (généraux et pour OpenAI)
+│   │   │   │   └── openai/
 │   │   │   ├── model/                        # Entités JPA et Enums
 │   │   │   ├── repository/                   # Répertoires Spring Data JPA
-│   │   │   └── service/                      # Logique métier
+│   │   │   └── service/                      # Logique métier (MediaRequestService, ChatGptService)
 │   │   └── resources
 │   │       ├── application.properties        # Configuration de l'application
 │   │       ├── static/                       # Ressources statiques (CSS, JS, images)
