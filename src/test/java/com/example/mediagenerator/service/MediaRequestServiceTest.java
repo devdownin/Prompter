@@ -9,9 +9,12 @@ import com.example.mediagenerator.repository.MediaRequestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -26,14 +29,21 @@ class MediaRequestServiceTest {
     @Mock
     private MediaRequestRepository mediaRequestRepository;
 
+    @Mock
+    private ChatGptService chatGptService; // Mock pour le nouveau service
+
     @InjectMocks
     private MediaRequestService mediaRequestService;
+
+    @Captor
+    private ArgumentCaptor<MediaRequest> mediaRequestCaptor;
 
     private MediaRequestDto sampleDto;
     private MediaRequest sampleRequest;
 
     @BeforeEach
     void setUp() {
+        // mediaRequestService = new MediaRequestService(mediaRequestRepository, chatGptService); // Assurez-vous que c'est injecté par @InjectMocks
         sampleDto = new MediaRequestDto();
         sampleDto.setScenario("Test Scenario");
         sampleDto.setSelectedIAs("TestIA");
@@ -141,12 +151,14 @@ class MediaRequestServiceTest {
     }
 
     @Test
-    void formatRequestToPrompt_whenRequestExistsAndEligible_shouldFormatAndSetStatusToPromptGenerated() throws InterruptedException {
+    void formatRequestToPrompt_whenRequestExistsAndEligible_andChatGptSucceeds_shouldSetPromptGenerated() {
         // Arrange
         sampleRequest.setStatus(RequestStatus.NOT_YET);
+        String mockPromptContent = "Mocked ChatGPT prompt content.";
         when(mediaRequestRepository.findById(1L)).thenReturn(Optional.of(sampleRequest));
-        // Mock save pour retourner l'objet modifié
         when(mediaRequestRepository.save(any(MediaRequest.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(chatGptService.generateFormattedPrompt(sampleRequest.getScenario(), sampleRequest.getMediaType()))
+                .thenReturn(Mono.just(mockPromptContent));
 
         // Act
         Optional<MediaRequest> result = mediaRequestService.formatRequestToPrompt(1L);
@@ -155,15 +167,65 @@ class MediaRequestServiceTest {
         assertTrue(result.isPresent());
         MediaRequest updatedRequest = result.get();
         assertEquals(RequestStatus.PROMPT_GENERATED, updatedRequest.getStatus());
-        assertNotNull(updatedRequest.getFormattedPrompt());
-        assertTrue(updatedRequest.getFormattedPrompt().contains("PROMPT POUR CHATGPT (Simulation)"));
-        assertTrue(updatedRequest.getFormattedPrompt().contains(sampleRequest.getScenario()));
-        assertNull(updatedRequest.getErrorMessage()); // Erreurs précédentes effacées
+        assertEquals(mockPromptContent, updatedRequest.getFormattedPrompt());
+        assertNull(updatedRequest.getErrorMessage());
 
-        // Vérifier les appels à save : une fois pour FORMATTING_PROMPT, une fois pour PROMPT_GENERATED
-        verify(mediaRequestRepository, times(2)).save(updatedRequest);
-        verify(mediaRequestRepository, times(1)).findById(1L);
+        verify(mediaRequestRepository, times(2)).save(mediaRequestCaptor.capture());
+        List<MediaRequest> savedRequests = mediaRequestCaptor.getAllValues();
+        assertEquals(RequestStatus.FORMATTING_PROMPT, savedRequests.get(0).getStatus()); // First save
+        assertEquals(RequestStatus.PROMPT_GENERATED, savedRequests.get(1).getStatus()); // Second save
+
+        verify(chatGptService, times(1)).generateFormattedPrompt(sampleRequest.getScenario(), sampleRequest.getMediaType());
     }
+
+    @Test
+    void formatRequestToPrompt_whenRequestExistsAndEligible_andChatGptFails_shouldSetStatusToFail() {
+        // Arrange
+        sampleRequest.setStatus(RequestStatus.NOT_YET);
+        String errorMessageFromChatGpt = "Erreur: OpenAI API error.";
+        when(mediaRequestRepository.findById(1L)).thenReturn(Optional.of(sampleRequest));
+        when(mediaRequestRepository.save(any(MediaRequest.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(chatGptService.generateFormattedPrompt(sampleRequest.getScenario(), sampleRequest.getMediaType()))
+                .thenReturn(Mono.just(errorMessageFromChatGpt)); // Simuler une réponse d'erreur
+
+        // Act
+        Optional<MediaRequest> result = mediaRequestService.formatRequestToPrompt(1L);
+
+        // Assert
+        assertTrue(result.isPresent());
+        MediaRequest updatedRequest = result.get();
+        assertEquals(RequestStatus.FAIL, updatedRequest.getStatus());
+        assertEquals(errorMessageFromChatGpt, updatedRequest.getErrorMessage());
+        assertNull(updatedRequest.getFormattedPrompt());
+
+        verify(mediaRequestRepository, times(2)).save(mediaRequestCaptor.capture());
+         List<MediaRequest> savedRequests = mediaRequestCaptor.getAllValues();
+        assertEquals(RequestStatus.FORMATTING_PROMPT, savedRequests.get(0).getStatus());
+        assertEquals(RequestStatus.FAIL, savedRequests.get(1).getStatus());
+        verify(chatGptService, times(1)).generateFormattedPrompt(sampleRequest.getScenario(), sampleRequest.getMediaType());
+    }
+
+    @Test
+    void formatRequestToPrompt_whenChatGptServiceThrowsException_shouldSetStatusToFail() {
+        // Arrange
+        sampleRequest.setStatus(RequestStatus.NOT_YET);
+        when(mediaRequestRepository.findById(1L)).thenReturn(Optional.of(sampleRequest));
+        when(mediaRequestRepository.save(any(MediaRequest.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(chatGptService.generateFormattedPrompt(sampleRequest.getScenario(), sampleRequest.getMediaType()))
+                .thenReturn(Mono.error(new RuntimeException("Simulated network error")));
+
+        // Act
+        Optional<MediaRequest> result = mediaRequestService.formatRequestToPrompt(1L);
+
+        // Assert
+        assertTrue(result.isPresent());
+        MediaRequest updatedRequest = result.get();
+        assertEquals(RequestStatus.FAIL, updatedRequest.getStatus());
+        assertTrue(updatedRequest.getErrorMessage().contains("Simulated network error"));
+
+        verify(mediaRequestRepository, times(2)).save(any(MediaRequest.class)); // FORMATTING_PROMPT, then FAIL
+    }
+
 
     @Test
     void formatRequestToPrompt_whenRequestNotFound_shouldReturnEmpty() {

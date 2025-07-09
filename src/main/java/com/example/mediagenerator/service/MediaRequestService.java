@@ -4,9 +4,11 @@ import com.example.mediagenerator.dto.MediaRequestDto;
 import com.example.mediagenerator.model.MediaRequest;
 import com.example.mediagenerator.model.RequestStatus;
 import com.example.mediagenerator.repository.MediaRequestRepository;
-import lombok.RequiredArgsConstructor;
+// import lombok.RequiredArgsConstructor; // Remplacé par @Autowired pour le constructeur
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -20,7 +22,14 @@ import java.util.Random; // Pour la simulation
 public class MediaRequestService {
 
     private final MediaRequestRepository mediaRequestRepository;
-    private final Random random = new Random(); // Pour simuler le succès/échec
+    private final ChatGptService chatGptService; // Injection du nouveau service
+    private final Random random = new Random(); // Conservé pour la simulation de processPendingMediaRequests
+
+    @Autowired
+    public MediaRequestService(MediaRequestRepository mediaRequestRepository, ChatGptService chatGptService) {
+        this.mediaRequestRepository = mediaRequestRepository;
+        this.chatGptService = chatGptService;
+    }
 
     @Transactional
     public MediaRequest submitNewRequest(MediaRequestDto dto) {
@@ -100,46 +109,36 @@ public class MediaRequestService {
         // Mettre à jour le statut à FORMATTING_PROMPT
         request.setStatus(RequestStatus.FORMATTING_PROMPT);
         request.setErrorMessage(null); // Clear previous errors if any
-        MediaRequest savedRequest = mediaRequestRepository.save(request);
+        // Sauvegarde initiale du statut FORMATTING_PROMPT
+        MediaRequest inProgressRequest = mediaRequestRepository.save(request);
         log.info("Request ID {} status set to FORMATTING_PROMPT.", id);
 
-
-        // Simuler la construction du prompt et l'appel à l'IA
         try {
-            // Simuler un délai pour la génération du prompt
-            Thread.sleep(2000 + random.nextInt(3000)); // Entre 2 et 5 secondes
+            // Appel au ChatGptService
+            String formattedPromptResult = chatGptService.generateFormattedPrompt(
+                    inProgressRequest.getScenario(),
+                    inProgressRequest.getMediaType()
+            ).block(Duration.ofSeconds(60)); // Bloquer pour 60 secondes max, ajuster si nécessaire
 
-            String scenario = savedRequest.getScenario();
-            MediaType mediaType = savedRequest.getMediaType();
-            String simulatedPrompt = String.format(
-                    "--- PROMPT POUR CHATGPT (Simulation) ---\n" +
-                    "Objectif Média: %s\n" +
-                    "Scénario Initial:\n\"%s\"\n\n" +
-                    "Instructions:\n" +
-                    "1. Analyser le scénario ci-dessus.\n" +
-                    "2. Proposer une structure de prompt détaillée pour générer un média de type '%s'.\n" +
-                    "3. Inclure des suggestions pour les personnages, les visuels clés, et le ton.\n" +
-                    "4. Le prompt doit être optimisé pour une IA générative d'images/vidéos.\n" +
-                    "--- FIN DE LA SIMULATION DE PROMPT ---",
-                    mediaType, scenario, mediaType
-            );
+            if (formattedPromptResult != null && !formattedPromptResult.startsWith("Erreur")) {
+                log.info("Prompt formatting successful for request ID: {}. Received prompt starting with: {}", id, formattedPromptResult.substring(0, Math.min(formattedPromptResult.length(), 70))+"...");
+                inProgressRequest.setFormattedPrompt(formattedPromptResult);
+                inProgressRequest.setStatus(RequestStatus.PROMPT_GENERATED);
+                inProgressRequest.setErrorMessage(null); // Effacer les erreurs précédentes
+            } else {
+                log.warn("Prompt formatting failed for request ID: {}. Response from ChatGptService: {}", id, formattedPromptResult);
+                inProgressRequest.setStatus(RequestStatus.FAIL);
+                inProgressRequest.setErrorMessage(formattedPromptResult != null ? formattedPromptResult : "Échec de la génération du prompt par le service IA.");
+            }
+            return Optional.of(mediaRequestRepository.save(inProgressRequest));
 
-            log.info("Prompt formatting successful for request ID: {}", id);
-            savedRequest.setFormattedPrompt(simulatedPrompt);
-            savedRequest.setStatus(RequestStatus.PROMPT_GENERATED);
-            return Optional.of(mediaRequestRepository.save(savedRequest));
-
-        } catch (InterruptedException e) {
-            log.error("Prompt formatting interrupted for request ID: {}", id, e);
-            Thread.currentThread().interrupt();
-            request.setStatus(RequestStatus.FAIL);
-            request.setErrorMessage("Génération du prompt interrompue.");
-            return Optional.of(mediaRequestRepository.save(request));
-        } catch (Exception e) {
-            log.error("Unexpected error during prompt formatting for request ID: {}", id, e);
-            request.setStatus(RequestStatus.FAIL);
-            request.setErrorMessage("Erreur inattendue lors de la génération du prompt: " + e.getMessage());
-            return Optional.of(mediaRequestRepository.save(request));
+        } catch (Exception e) { // Cela inclut les exceptions si .block() timeout ou autres erreurs de l'appel réactif
+            log.error("Error during prompt formatting call for request ID: {}", id, e);
+            // Assurer que la requête est rechargée pour éviter des problèmes d'état détaché si l'exception vient de .block()
+            MediaRequest requestToFail = mediaRequestRepository.findById(id).orElse(inProgressRequest);
+            requestToFail.setStatus(RequestStatus.FAIL);
+            requestToFail.setErrorMessage("Erreur lors de la communication avec le service IA pour le formatage du prompt: " + e.getMessage());
+            return Optional.of(mediaRequestRepository.save(requestToFail));
         }
     }
 
