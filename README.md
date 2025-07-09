@@ -7,11 +7,12 @@ Cette application web, construite avec Spring Boot, permet aux utilisateurs de s
 *   **Soumission de Scénarios** : Interface pour saisir un scénario, choisir l'IA, le type de média, et la plateforme cible.
 *   **Tableau de Bord des Demandes** : Visualisation de toutes les demandes avec leur statut (Not Yet, Go, Running, Fail, Success), dates de mise à jour, et actions possibles.
 *   **Traitement des Demandes** :
-    *   Les demandes passent par différents statuts.
-    *   Le traitement est actuellement simulé (délais et résultats aléatoires).
-    *   Peut être déclenché manuellement depuis le tableau de bord.
+    *   Les demandes passent par différents statuts (Not Yet, Go, Formatting Prompt, Prompt Generated, Running, Fail, Success).
+    *   **Formatage de Prompt** : Une action permet de générer (simulé) un prompt détaillé pour une IA à partir du scénario et du type de média. Le statut passe à `FORMATTING_PROMPT` puis `PROMPT_GENERATED`.
+    *   **Génération de Média** : Le traitement de la génération de média (déclenché par le bouton "Go Média") est actuellement simulé (délais et résultats aléatoires).
+    *   Les deux types de traitement peuvent être déclenchés manuellement depuis le tableau de bord.
 *   **Optimisation des Médias** : (Conceptuel) Les médias générés seraient optimisés pour un affichage vertical.
-*   **Interface Utilisateur** : Style inspiré de Material Design avec icônes et tooltips.
+*   **Interface Utilisateur** : Style inspiré de Material Design avec icônes et tooltips. Le prompt formaté est visible via un tooltip.
 
 ## Technologies Utilisées
 
@@ -92,9 +93,9 @@ Cette application web, construite avec Spring Boot, permet aux utilisateurs de s
 
 ## Points d'Amélioration Possibles (Futur)
 
-*   **Intégration réelle des APIs IA** : Remplacer la simulation par des appels réels aux services Mistral, ChatGPT, DeepSeek.
+*   **Intégration réelle des APIs IA** : Remplacer la simulation (pour le formatage de prompt et la génération de média) par des appels réels aux services Mistral, ChatGPT, DeepSeek.
 *   **Gestion avancée des erreurs et des nouvelles tentatives** pour les appels IA.
-*   **Stockage persistant des médias générés** (ex: S3, stockage de fichiers local).
+*   **Stockage persistant des médias générés et des prompts formatés** (ex: S3, stockage de fichiers local, ou amélioration de la base de données).
 *   **Authentification et autorisation** des utilisateurs.
 *   **Pagination et filtrage avancé** dans le tableau de bord.
 *   **Implémentation complète des tooltips Material 3** et autres composants web Material 3.
