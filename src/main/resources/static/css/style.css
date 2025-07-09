@@ -152,6 +152,14 @@ h2 .material-icons {
     background-color: #0288d1; /* Darker Light Blue */
 }
 
+.button.action-format {
+    background-color: #7e57c2; /* Deep Purple Lighten-1 */
+    color: white;
+}
+.button.action-format:hover {
+    background-color: #5e35b1; /* Deep Purple Darken-1 */
+}
+
 
 /* Table Styles */
 .table-container {
@@ -205,6 +213,8 @@ tbody tr:hover {
 /* Specific status colors */
 .status-badge.status-not_yet, .status-icon.not-yet { color: #757575; background-color: #e0e0e0; } /* Grey */
 .status-badge.status-go, .status-icon.go { color: white; background-color: #fb8c00; } /* Orange */
+.status-badge.status-formatting_prompt, .status-icon.formatting-prompt { color: white; background-color: #673ab7; } /* Deep Purple */
+.status-badge.status-prompt_generated, .status-icon.prompt-generated { color: white; background-color: #009688; } /* Teal */
 .status-badge.status-running, .status-icon.running { color: white; background-color: #1976d2; } /* Blue */
 .status-badge.status-success, .status-icon.success { color: white; background-color: #388e3c; } /* Green */
 .status-badge.status-fail, .status-icon.fail { color: white; background-color: #d32f2f; } /* Red */
@@ -217,13 +227,15 @@ td .status-badge {
 }
 td .status-badge .status-icon.not-yet { color: #757575;}
 td .status-badge .status-icon.go { color: #fb8c00;}
+td .status-badge .status-icon.formatting-prompt { color: #673ab7; }
+td .status-badge .status-icon.prompt-generated { color: #009688; }
 td .status-badge .status-icon.running { color: #1976d2;}
 td .status-badge .status-icon.success { color: #388e3c;}
 td .status-badge .status-icon.fail { color: #d32f2f;}
 td .status-badge .status-icon.unknown { color: #bdbdbd;}
 
 
-/* Error Messages */
+/* Error Messages & Info */
 .error-message-inline .material-icons {
     color: #d32f2f; /* Red */
     vertical-align: middle;
@@ -253,6 +265,19 @@ td .status-badge .status-icon.unknown { color: #bdbdbd;}
     color: #c62828; /* Dark Red */
     border: 1px solid #ef9a9a;
 }
+.flash-message.info {
+    background-color: #e3f2fd; /* Light Blue */
+    color: #1565c0; /* Dark Blue */
+    border: 1px solid #90caf9;
+}
+
+/* Prompt Info in table */
+.prompt-info .material-icons {
+    color: #009688; /* Teal, same as prompt-generated status */
+    vertical-align: middle;
+    cursor: help;
+}
+
 
 /* Dashboard Specific */
 .dashboard-header {

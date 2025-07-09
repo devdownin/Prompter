@@ -67,22 +67,87 @@ public class MediaRequestService {
     }
 
     @Transactional
-    public void updateRequestStatus(Long id, RequestStatus status, String errorMessage, String generatedPath) {
-        log.info("Updating status for request id {}: {} - Error: {} - Path: {}", id, status, errorMessage, generatedPath);
+    public void updateRequestStatus(Long id, RequestStatus status, String errorMessage, String generatedPath, String formattedPrompt) {
+        log.info("Updating status for request id {}: Status={}, Error='{}', Path='{}', Prompt='{}'", id, status, errorMessage, generatedPath, formattedPrompt != null ? formattedPrompt.substring(0, Math.min(formattedPrompt.length(), 30))+"..." : "null");
         mediaRequestRepository.findById(id).ifPresent(request -> {
             request.setStatus(status);
-            request.setErrorMessage(errorMessage);
-            request.setGeneratedMediaPath(generatedPath);
+            if (errorMessage != null) request.setErrorMessage(errorMessage);
+            if (generatedPath != null) request.setGeneratedMediaPath(generatedPath);
+            if (formattedPrompt != null) request.setFormattedPrompt(formattedPrompt);
             // statusUpdateDate sera mis à jour automatiquement
             mediaRequestRepository.save(request);
         });
     }
 
-    // Méthode pour simuler le traitement des tâches.
-    // Dans une vraie application, cela impliquerait des appels à des IA, etc.
+    @Transactional
+    public Optional<MediaRequest> formatRequestToPrompt(Long id) {
+        log.info("Attempting to format prompt for request ID: {}", id);
+        Optional<MediaRequest> requestOptional = mediaRequestRepository.findById(id);
+
+        if (requestOptional.isEmpty()) {
+            log.warn("Request ID {} not found for prompt formatting.", id);
+            return Optional.empty();
+        }
+
+        MediaRequest request = requestOptional.get();
+
+        // Vérifier si le statut permet cette action
+        if (!(request.getStatus() == RequestStatus.NOT_YET || request.getStatus() == RequestStatus.GO || request.getStatus() == RequestStatus.PROMPT_GENERATED)) {
+            log.warn("Request ID {} is in status {} and cannot be formatted into a prompt at this stage.", id, request.getStatus());
+            return Optional.empty(); // Ou lever une exception
+        }
+
+        // Mettre à jour le statut à FORMATTING_PROMPT
+        request.setStatus(RequestStatus.FORMATTING_PROMPT);
+        request.setErrorMessage(null); // Clear previous errors if any
+        MediaRequest savedRequest = mediaRequestRepository.save(request);
+        log.info("Request ID {} status set to FORMATTING_PROMPT.", id);
+
+
+        // Simuler la construction du prompt et l'appel à l'IA
+        try {
+            // Simuler un délai pour la génération du prompt
+            Thread.sleep(2000 + random.nextInt(3000)); // Entre 2 et 5 secondes
+
+            String scenario = savedRequest.getScenario();
+            MediaType mediaType = savedRequest.getMediaType();
+            String simulatedPrompt = String.format(
+                    "--- PROMPT POUR CHATGPT (Simulation) ---\n" +
+                    "Objectif Média: %s\n" +
+                    "Scénario Initial:\n\"%s\"\n\n" +
+                    "Instructions:\n" +
+                    "1. Analyser le scénario ci-dessus.\n" +
+                    "2. Proposer une structure de prompt détaillée pour générer un média de type '%s'.\n" +
+                    "3. Inclure des suggestions pour les personnages, les visuels clés, et le ton.\n" +
+                    "4. Le prompt doit être optimisé pour une IA générative d'images/vidéos.\n" +
+                    "--- FIN DE LA SIMULATION DE PROMPT ---",
+                    mediaType, scenario, mediaType
+            );
+
+            log.info("Prompt formatting successful for request ID: {}", id);
+            savedRequest.setFormattedPrompt(simulatedPrompt);
+            savedRequest.setStatus(RequestStatus.PROMPT_GENERATED);
+            return Optional.of(mediaRequestRepository.save(savedRequest));
+
+        } catch (InterruptedException e) {
+            log.error("Prompt formatting interrupted for request ID: {}", id, e);
+            Thread.currentThread().interrupt();
+            request.setStatus(RequestStatus.FAIL);
+            request.setErrorMessage("Génération du prompt interrompue.");
+            return Optional.of(mediaRequestRepository.save(request));
+        } catch (Exception e) {
+            log.error("Unexpected error during prompt formatting for request ID: {}", id, e);
+            request.setStatus(RequestStatus.FAIL);
+            request.setErrorMessage("Erreur inattendue lors de la génération du prompt: " + e.getMessage());
+            return Optional.of(mediaRequestRepository.save(request));
+        }
+    }
+
+
+    // Méthode pour simuler le traitement des tâches de génération de média.
     // @Scheduled(fixedDelay = 10000) // Exécute toutes les 10 secondes
-    public void processPendingRequests() {
-        log.info("Checking for pending requests to process...");
+    public void processPendingMediaRequests() {
+        log.info("Checking for pending media generation requests (status GO)...");
         List<MediaRequest> pendingRequests = mediaRequestRepository.findByStatus(RequestStatus.GO);
 
         if (pendingRequests.isEmpty()) {

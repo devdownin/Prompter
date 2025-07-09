@@ -50,6 +50,10 @@ public class MediaRequest {
 
     private String errorMessage; // Pour stocker un message d'erreur en cas de statut FAIL
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String formattedPrompt; // Pour stocker le prompt formaté généré pour l'IA
+
     // Constructeur personnalisé si nécessaire pour initialiser certains champs
     public MediaRequest(String scenario, String selectedIAs, MediaType mediaType, TargetPlatform targetPlatform) {
         this.scenario = scenario;
