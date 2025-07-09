@@ -1,2 +1,3 @@
-com/example/mediagenerator/service/MediaRequestServiceTest.class
 com/example/mediagenerator/MediaGeneratorApplicationTests.class
+com/example/mediagenerator/service/MediaRequestServiceTest.class
+com/example/mediagenerator/service/GeminiServiceTest.class

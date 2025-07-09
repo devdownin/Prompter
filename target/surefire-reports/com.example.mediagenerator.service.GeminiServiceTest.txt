@@ -1,0 +1,33 @@
+-------------------------------------------------------------------------------
+Test set: com.example.mediagenerator.service.GeminiServiceTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 1, Errors: 1, Skipped: 0, Time elapsed: 0.675 s <<< FAILURE! -- in com.example.mediagenerator.service.GeminiServiceTest
+com.example.mediagenerator.service.GeminiServiceTest.generateFormattedPrompt_candidateBlockedBySafetyFilter -- Time elapsed: 0.628 s <<< FAILURE!
+java.lang.AssertionError: expectation "expectNext(Erreur: Contenu du candidat bloqué par les filtres de sécurité Gemini.)" failed (expected value: Erreur: Contenu du candidat bloqué par les filtres de sécurité Gemini.; actual value: Erreur: Réponse vide ou malformée de Gemini.)
+	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
+	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
+	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
+	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
+	at reactor.test.DefaultStepVerifierBuilder.lambda$addExpectedValue$10(DefaultStepVerifierBuilder.java:512)
+	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onNext(DefaultStepVerifierBuilder.java:1146)
+	at reactor.core.publisher.FluxSubscribeOnCallable$CallableSubscribeOnSubscription.run(FluxSubscribeOnCallable.java:252)
+	at reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:68)
+	at reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:28)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+com.example.mediagenerator.service.GeminiServiceTest.generateFormattedPrompt_geminiApiError -- Time elapsed: 0.016 s <<< ERROR!
+org.mockito.exceptions.base.MockitoException:
+
+Checked exception is invalid for this method!
+Invalid: java.io.IOException: Gemini network error
+	at com.example.mediagenerator.service.GeminiServiceTest.generateFormattedPrompt_geminiApiError(GeminiServiceTest.java:107)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)

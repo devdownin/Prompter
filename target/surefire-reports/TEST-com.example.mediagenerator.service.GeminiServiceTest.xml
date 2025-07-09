@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.mediagenerator.MediaGeneratorApplicationTests" time="5.777" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.mediagenerator.service.GeminiServiceTest" time="0.675" tests="5" errors="1" skipped="0" failures="1">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -61,81 +61,54 @@
     <property name="java.class.version" value="65.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[media-generator] "/>
   </properties>
-  <testcase name="contextLoads" classname="com.example.mediagenerator.MediaGeneratorApplicationTests" time="0.434">
-    <system-out><![CDATA[17:44:10.863 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.example.mediagenerator.MediaGeneratorApplicationTests]: MediaGeneratorApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-17:44:10.995 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.example.mediagenerator.MediaGeneratorApplication for test class com.example.mediagenerator.MediaGeneratorApplicationTests
-17:44:11.180 [main] INFO org.springframework.boot.devtools.restart.RestartApplicationListener -- Restart disabled due to context in which it is running
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
-
- :: Spring Boot ::                (v3.5.3)
-
-2025-07-09T17:44:11.501Z  INFO 11592 --- [media-generator] [           main] c.e.m.MediaGeneratorApplicationTests     : Starting MediaGeneratorApplicationTests using Java 21.0.7 with PID 11592 (started by jules in /app)
-2025-07-09T17:44:11.502Z DEBUG 11592 --- [media-generator] [           main] c.e.m.MediaGeneratorApplicationTests     : Running with Spring Boot v3.5.3, Spring v6.2.8
-2025-07-09T17:44:11.503Z  INFO 11592 --- [media-generator] [           main] c.e.m.MediaGeneratorApplicationTests     : No active profile set, falling back to 1 default profile: "default"
-2025-07-09T17:44:12.364Z  INFO 11592 --- [media-generator] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-07-09T17:44:12.525Z  INFO 11592 --- [media-generator] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 150 ms. Found 1 JPA repository interface.
-2025-07-09T17:44:13.080Z  INFO 11592 --- [media-generator] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-07-09T17:44:13.133Z  INFO 11592 --- [media-generator] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
-2025-07-09T17:44:13.171Z  INFO 11592 --- [media-generator] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-07-09T17:44:13.498Z  INFO 11592 --- [media-generator] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-07-09T17:44:13.530Z  INFO 11592 --- [media-generator] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-07-09T17:44:13.737Z  INFO 11592 --- [media-generator] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:c84ba291-d078-4ec7-9dc7-645de357fa0b user=SA
-2025-07-09T17:44:13.740Z  INFO 11592 --- [media-generator] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-07-09T17:44:13.799Z  INFO 11592 --- [media-generator] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 2.3.232
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2025-07-09T17:44:14.588Z  INFO 11592 --- [media-generator] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-07-09T17:44:14.640Z DEBUG 11592 --- [media-generator] [           main] org.hibernate.SQL                        :
-    create table media_request (
-        id bigint generated by default as identity,
-        creation_date timestamp(6) not null,
-        error_message varchar(255),
-        formatted_prompt TEXT,
-        generated_media_path varchar(255),
-        media_type enum ('COMIC','IMAGES','VIDEO') not null,
-        scenario TEXT not null,
-        selectedias varchar(255),
-        status enum ('FAIL','FORMATTING_PROMPT','GO','NOT_YET','PROMPT_GENERATED','RUNNING','SUCCESS') not null,
-        status_update_date timestamp(6),
-        target_platform enum ('INSTAGRAM','TIKTOK') not null,
-        primary key (id)
-    )
-Hibernate:
-    create table media_request (
-        id bigint generated by default as identity,
-        creation_date timestamp(6) not null,
-        error_message varchar(255),
-        formatted_prompt TEXT,
-        generated_media_path varchar(255),
-        media_type enum ('COMIC','IMAGES','VIDEO') not null,
-        scenario TEXT not null,
-        selectedias varchar(255),
-        status enum ('FAIL','FORMATTING_PROMPT','GO','NOT_YET','PROMPT_GENERATED','RUNNING','SUCCESS') not null,
-        status_update_date timestamp(6),
-        target_platform enum ('INSTAGRAM','TIKTOK') not null,
-        primary key (id)
-    )
-2025-07-09T17:44:14.652Z  INFO 11592 --- [media-generator] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-07-09T17:44:15.441Z  WARN 11592 --- [media-generator] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-07-09T17:44:15.779Z  INFO 11592 --- [media-generator] [           main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:c84ba291-d078-4ec7-9dc7-645de357fa0b'
-2025-07-09T17:44:15.926Z  INFO 11592 --- [media-generator] [           main] c.e.m.MediaGeneratorApplicationTests     : Started MediaGeneratorApplicationTests in 4.758 seconds (process running for 6.641)
+  <testcase name="generateFormattedPrompt_candidateBlockedBySafetyFilter" classname="com.example.mediagenerator.service.GeminiServiceTest" time="0.628">
+    <failure message="expectation &quot;expectNext(Erreur: Contenu du candidat bloqué par les filtres de sécurité Gemini.)&quot; failed (expected value: Erreur: Contenu du candidat bloqué par les filtres de sécurité Gemini.; actual value: Erreur: Réponse vide ou malformée de Gemini.)" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: expectation "expectNext(Erreur: Contenu du candidat bloqué par les filtres de sécurité Gemini.)" failed (expected value: Erreur: Contenu du candidat bloqué par les filtres de sécurité Gemini.; actual value: Erreur: Réponse vide ou malformée de Gemini.)
+	at reactor.test.MessageFormatter.assertionError(MessageFormatter.java:115)
+	at reactor.test.MessageFormatter.failPrefix(MessageFormatter.java:104)
+	at reactor.test.MessageFormatter.fail(MessageFormatter.java:73)
+	at reactor.test.MessageFormatter.failOptional(MessageFormatter.java:88)
+	at reactor.test.DefaultStepVerifierBuilder.lambda$addExpectedValue$10(DefaultStepVerifierBuilder.java:512)
+	at reactor.test.DefaultStepVerifierBuilder$SignalEvent.test(DefaultStepVerifierBuilder.java:2289)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onSignal(DefaultStepVerifierBuilder.java:1529)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onExpectation(DefaultStepVerifierBuilder.java:1477)
+	at reactor.test.DefaultStepVerifierBuilder$DefaultVerifySubscriber.onNext(DefaultStepVerifierBuilder.java:1146)
+	at reactor.core.publisher.FluxSubscribeOnCallable$CallableSubscribeOnSubscription.run(FluxSubscribeOnCallable.java:252)
+	at reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:68)
+	at reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:28)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+]]></failure>
+    <system-out><![CDATA[2025-07-09T17:44:17.553Z  INFO 11592 --- [media-generator] [           main] c.e.m.service.GeminiService              : Sending request to Gemini API model gemini-1.5-flash-latest for scenario excerpt: A controversial topic...
+2025-07-09T17:44:17.593Z  WARN 11592 --- [media-generator] [oundedElastic-1] c.e.m.service.GeminiService              : Received empty or malformed response (or no text) from Gemini API model gemini-1.5-flash-latest.
 ]]></system-out>
-    <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
-WARNING: A Java agent has been loaded dynamically (/home/jules/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.6/byte-buddy-agent-1.17.6.jar)
-WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
-WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
-WARNING: Dynamic loading of agents will be disallowed by default in a future release
-]]></system-err>
+  </testcase>
+  <testcase name="generateFormattedPrompt_geminiApiError" classname="com.example.mediagenerator.service.GeminiServiceTest" time="0.016">
+    <error message="&#10;Checked exception is invalid for this method!&#10;Invalid: java.io.IOException: Gemini network error" type="org.mockito.exceptions.base.MockitoException"><![CDATA[org.mockito.exceptions.base.MockitoException:
+
+Checked exception is invalid for this method!
+Invalid: java.io.IOException: Gemini network error
+	at com.example.mediagenerator.service.GeminiServiceTest.generateFormattedPrompt_geminiApiError(GeminiServiceTest.java:107)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="generateFormattedPrompt_success" classname="com.example.mediagenerator.service.GeminiServiceTest" time="0.01">
+    <system-out><![CDATA[2025-07-09T17:44:17.625Z  INFO 11592 --- [media-generator] [           main] c.e.m.service.GeminiService              : Sending request to Gemini API model gemini-1.5-flash-latest for scenario excerpt: A cat flying in space...
+2025-07-09T17:44:17.627Z  INFO 11592 --- [media-generator] [oundedElastic-1] c.e.m.service.GeminiService              : Successfully received response from Gemini API model gemini-1.5-flash-latest.
+]]></system-out>
+  </testcase>
+  <testcase name="generateFormattedPrompt_emptyTextInResponse" classname="com.example.mediagenerator.service.GeminiServiceTest" time="0.008">
+    <system-out><![CDATA[2025-07-09T17:44:17.633Z  INFO 11592 --- [media-generator] [           main] c.e.m.service.GeminiService              : Sending request to Gemini API model gemini-1.5-flash-latest for scenario excerpt: An elephant painting a masterpiece...
+2025-07-09T17:44:17.636Z  WARN 11592 --- [media-generator] [oundedElastic-1] c.e.m.service.GeminiService              : Received empty or malformed response (or no text) from Gemini API model gemini-1.5-flash-latest.
+]]></system-out>
+  </testcase>
+  <testcase name="generateFormattedPrompt_candidateWithNoContent" classname="com.example.mediagenerator.service.GeminiServiceTest" time="0.005">
+    <system-out><![CDATA[2025-07-09T17:44:17.642Z  INFO 11592 --- [media-generator] [           main] c.e.m.service.GeminiService              : Sending request to Gemini API model gemini-1.5-flash-latest for scenario excerpt: A robot chef...
+2025-07-09T17:44:17.643Z  WARN 11592 --- [media-generator] [oundedElastic-1] c.e.m.service.GeminiService              : Received empty or malformed response (or no text) from Gemini API model gemini-1.5-flash-latest.
+]]></system-out>
   </testcase>
 </testsuite>
