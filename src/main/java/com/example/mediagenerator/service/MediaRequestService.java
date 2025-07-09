@@ -5,30 +5,34 @@ import com.example.mediagenerator.model.MediaRequest;
 import com.example.mediagenerator.model.RequestStatus;
 import com.example.mediagenerator.repository.MediaRequestRepository;
 // import lombok.RequiredArgsConstructor; // Remplacé par @Autowired pour le constructeur
-import lombok.extern.slf4j.Slf4j;
+// import lombok.extern.slf4j.Slf4j; // Removing Lombok
+import org.slf4j.Logger; // Manual SLF4J
+import org.slf4j.LoggerFactory; // Manual SLF4J
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random; // Pour la simulation
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
+// @Slf4j // Removing Lombok
 public class MediaRequestService {
 
+    private static final Logger log = LoggerFactory.getLogger(MediaRequestService.class); // Manual logger
+
     private final MediaRequestRepository mediaRequestRepository;
-    private final ChatGptService chatGptService; // Injection du nouveau service
+    private final GeminiService geminiService; // Injection du nouveau service
     private final Random random = new Random(); // Conservé pour la simulation de processPendingMediaRequests
 
     @Autowired
-    public MediaRequestService(MediaRequestRepository mediaRequestRepository, ChatGptService chatGptService) {
+    public MediaRequestService(MediaRequestRepository mediaRequestRepository, GeminiService geminiService) {
         this.mediaRequestRepository = mediaRequestRepository;
-        this.chatGptService = chatGptService;
+        this.geminiService = geminiService;
     }
 
     @Transactional
@@ -114,11 +118,11 @@ public class MediaRequestService {
         log.info("Request ID {} status set to FORMATTING_PROMPT.", id);
 
         try {
-            // Appel au ChatGptService
-            String formattedPromptResult = chatGptService.generateFormattedPrompt(
+            // Appel au GeminiService
+            String formattedPromptResult = geminiService.generateFormattedPrompt(
                     inProgressRequest.getScenario(),
                     inProgressRequest.getMediaType()
-            ).block(Duration.ofSeconds(60)); // Bloquer pour 60 secondes max, ajuster si nécessaire
+            ).block(java.time.Duration.ofSeconds(60)); // Bloquer pour 60 secondes max, ajuster si nécessaire
 
             if (formattedPromptResult != null && !formattedPromptResult.startsWith("Erreur")) {
                 log.info("Prompt formatting successful for request ID: {}. Received prompt starting with: {}", id, formattedPromptResult.substring(0, Math.min(formattedPromptResult.length(), 70))+"...");
@@ -126,18 +130,18 @@ public class MediaRequestService {
                 inProgressRequest.setStatus(RequestStatus.PROMPT_GENERATED);
                 inProgressRequest.setErrorMessage(null); // Effacer les erreurs précédentes
             } else {
-                log.warn("Prompt formatting failed for request ID: {}. Response from ChatGptService: {}", id, formattedPromptResult);
+                log.warn("Prompt formatting failed for request ID: {}. Response from GeminiService: {}", id, formattedPromptResult);
                 inProgressRequest.setStatus(RequestStatus.FAIL);
-                inProgressRequest.setErrorMessage(formattedPromptResult != null ? formattedPromptResult : "Échec de la génération du prompt par le service IA.");
+                inProgressRequest.setErrorMessage(formattedPromptResult != null ? formattedPromptResult : "Échec de la génération du prompt par le service Gemini.");
             }
             return Optional.of(mediaRequestRepository.save(inProgressRequest));
 
         } catch (Exception e) { // Cela inclut les exceptions si .block() timeout ou autres erreurs de l'appel réactif
-            log.error("Error during prompt formatting call for request ID: {}", id, e);
+            log.error("Error during prompt formatting call to Gemini service for request ID: {}", id, e);
             // Assurer que la requête est rechargée pour éviter des problèmes d'état détaché si l'exception vient de .block()
             MediaRequest requestToFail = mediaRequestRepository.findById(id).orElse(inProgressRequest);
             requestToFail.setStatus(RequestStatus.FAIL);
-            requestToFail.setErrorMessage("Erreur lors de la communication avec le service IA pour le formatage du prompt: " + e.getMessage());
+            requestToFail.setErrorMessage("Erreur lors de la communication avec le service Gemini pour le formatage du prompt: " + e.getMessage());
             return Optional.of(mediaRequestRepository.save(requestToFail));
         }
     }
@@ -157,7 +161,7 @@ public class MediaRequestService {
         for (MediaRequest request : pendingRequests) {
             log.info("Processing request ID: {}", request.getId());
             // 1. Mettre à jour le statut à RUNNING
-            updateRequestStatus(request.getId(), RequestStatus.RUNNING, null, null);
+            updateRequestStatus(request.getId(), RequestStatus.RUNNING, null, null, request.getFormattedPrompt());
 
             // 2. Simuler le traitement (appel IA, génération média)
             try {
@@ -167,18 +171,18 @@ public class MediaRequestService {
                 // Simuler succès ou échec
                 if (random.nextBoolean()) {
                     log.info("Request ID: {} processed successfully.", request.getId());
-                    updateRequestStatus(request.getId(), RequestStatus.SUCCESS, null, "/simulated/output/media_" + request.getId() + ".mp4");
+                    updateRequestStatus(request.getId(), RequestStatus.SUCCESS, null, "/simulated/output/media_" + request.getId() + ".mp4", request.getFormattedPrompt());
                 } else {
                     log.warn("Request ID: {} failed to process.", request.getId());
-                    updateRequestStatus(request.getId(), RequestStatus.FAIL, "Simulated IA processing error.", null);
+                    updateRequestStatus(request.getId(), RequestStatus.FAIL, "Simulated IA processing error.", null, request.getFormattedPrompt());
                 }
             } catch (InterruptedException e) {
                 log.error("Processing interrupted for request ID: {}", request.getId(), e);
                 Thread.currentThread().interrupt(); // Rétablir le statut d'interruption
-                updateRequestStatus(request.getId(), RequestStatus.FAIL, "Processing was interrupted.", null);
+                updateRequestStatus(request.getId(), RequestStatus.FAIL, "Processing was interrupted.", null, request.getFormattedPrompt());
             } catch (Exception e) {
                 log.error("Unexpected error during processing for request ID: {}", request.getId(), e);
-                updateRequestStatus(request.getId(), RequestStatus.FAIL, "Unexpected error: " + e.getMessage(), null);
+                updateRequestStatus(request.getId(), RequestStatus.FAIL, "Unexpected error: " + e.getMessage(), null, request.getFormattedPrompt());
             }
         }
     }

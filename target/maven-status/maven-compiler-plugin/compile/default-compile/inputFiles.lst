@@ -1,9 +1,16 @@
 /app/src/main/java/com/example/mediagenerator/MediaGeneratorApplication.java
+/app/src/main/java/com/example/mediagenerator/config/AppConfig.java
 /app/src/main/java/com/example/mediagenerator/controller/DashboardController.java
 /app/src/main/java/com/example/mediagenerator/dto/MediaRequestDto.java
+/app/src/main/java/com/example/mediagenerator/dto/openai/ChatGPTChoice.java
+/app/src/main/java/com/example/mediagenerator/dto/openai/ChatGPTRequest.java
+/app/src/main/java/com/example/mediagenerator/dto/openai/ChatGPTResponse.java
+/app/src/main/java/com/example/mediagenerator/dto/openai/ChatGPTUsage.java
+/app/src/main/java/com/example/mediagenerator/dto/openai/ChatMessage.java
 /app/src/main/java/com/example/mediagenerator/model/MediaRequest.java
 /app/src/main/java/com/example/mediagenerator/model/MediaType.java
 /app/src/main/java/com/example/mediagenerator/model/RequestStatus.java
 /app/src/main/java/com/example/mediagenerator/model/TargetPlatform.java
 /app/src/main/java/com/example/mediagenerator/repository/MediaRequestRepository.java
+/app/src/main/java/com/example/mediagenerator/service/GeminiService.java
 /app/src/main/java/com/example/mediagenerator/service/MediaRequestService.java
