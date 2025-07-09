@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Prompts IA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Générateur de Prompts pour Agent IA</h1>
+    </header>
+    <main>
+        <section id="prompt-input-section">
+            <h2>Nouvelle Demande de Prompt</h2>
+            <form id="prompt-form">
+                <div>
+                    <label for="prompt-title">Titre du Prompt :</label>
+                    <input type="text" id="prompt-title" name="prompt-title" required>
+                </div>
+                <div>
+                    <label for="prompt-context">Contexte :</label>
+                    <textarea id="prompt-context" name="prompt-context" rows="4" required></textarea>
+                </div>
+                <div>
+                    <label for="prompt-task">Tâche à accomplir :</label>
+                    <textarea id="prompt-task" name="prompt-task" rows="4" required></textarea>
+                </div>
+                <div>
+                    <label for="prompt-persona">Persona de l'IA (optionnel) :</label>
+                    <input type="text" id="prompt-persona" name="prompt-persona">
+                </div>
+                <div>
+                    <label for="prompt-format">Format de sortie souhaité (optionnel) :</label>
+                    <input type="text" id="prompt-format" name="prompt-format">
+                </div>
+                <div>
+                    <label for="prompt-constraints">Contraintes (optionnel) :</label>
+                    <textarea id="prompt-constraints" name="prompt-constraints" rows="3"></textarea>
+                </div>
+                <button type="submit" class="button-primary">Générer le Prompt</button>
+            </form>
+        </section>
+        <hr>
+        <section id="generated-prompts-section">
+            <h2>Prompts Générés</h2>
+            <div id="prompts-list">
+                <!-- Les prompts générés apparaîtront ici -->
+                <p>Aucun prompt généré pour le moment.</p>
+            </div>
+        </section>
+        <hr>
+         <section id="scenario-lines-section">
+            <h2>Lignes Scénario (Exemple)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Open Balance</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="scenario-line">
+                        <td>Premier élément du scénario</td>
+                        <td>100.00€</td>
+                        <td><button class="button-urgent">Action Urgente</button></td>
+                    </tr>
+                    <tr class="scenario-line">
+                        <td>Deuxième élément du scénario</td>
+                        <td>250.50€</td>
+                        <td><button class="button-secondary">Action Secondaire</button></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="total-amount">Montant Total:</td>
+                        <td class="total-amount-value">350.50€</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Générateur de Prompts IA</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
