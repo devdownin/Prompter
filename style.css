@@ -1,0 +1,353 @@
+/* Réinitialisation de base et styles globaux */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    color: #333333;
+    background-color: #FFFFFF;
+    line-height: 1.6;
+}
+
+/* Structure Globale */
+header, main, footer {
+    width: 90%;
+    max-width: 800px; /* Layout en colonne unique */
+    margin: 0 auto;
+    padding: 16px;
+}
+
+header {
+    border-bottom: 1px solid #DDDDDD;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+h1, h2 {
+    font-family: 'Roboto Bold', sans-serif; /* Police sans-serif bold pour les titres */
+    color: #2E86AB; /* Couleur primaire pour les titres */
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 28px; /* Taille ajustée pour le titre principal */
+}
+
+h2 {
+    font-size: 22px; /* Taille pour les sous-titres de section */
+    margin-bottom: 16px;
+    border-bottom: 2px solid #2E86AB;
+    padding-bottom: 8px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #DDDDDD;
+    margin: 32px 0; /* Espacement entre les sections */
+}
+
+/* Typographie */
+p, label, input, textarea, button {
+    font-family: 'Open Sans', sans-serif; /* Police sans-serif light pour le corps */
+    font-size: 16px;
+    color: #333333;
+}
+
+label {
+    color: #777777; /* Couleur pour les labels */
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+    width: calc(100% - 16px); /* Prend en compte le padding */
+    padding: 10px 8px;
+    margin-bottom: 16px;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    box-sizing: border-box; /* S'assure que padding et border sont inclus dans la largeur/hauteur */
+}
+
+textarea {
+    resize: vertical; /* Permet le redimensionnement vertical seulement */
+}
+
+/* Couleurs (déjà appliquées via h1, h2, body, label) */
+/* Primaire: #2E86AB (titres, boutons) */
+/* Secondaire: #F5F5F5 (fond des tableaux - sera appliqué plus tard) */
+/* Accents: #4CAF50 (vert pour montants positifs/boutons), #E74C3C (rouge pour actions urgentes) */
+/* Texte: #333333 (corps), #777777 (labels) */
+
+/* Espacement */
+section {
+    margin-bottom: 16px; /* Marge uniforme entre les sections */
+}
+
+footer {
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #DDDDDD;
+    font-size: 14px;
+    color: #777777;
+}
+
+/* Styles pour le formulaire */
+#prompt-form div {
+    margin-bottom: 20px;
+}
+
+/* Styles de base pour les tableaux (seront affinés à l'étape suivante) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+th, td {
+    padding: 12px 8px; /* Padding interne des tableaux (vertical, horizontal) */
+    text-align: left;
+    border-bottom: 1px solid #DDDDDD; /* Bordures légères entre les lignes */
+}
+
+thead th {
+    background-color: #2E86AB; /* Fond bleu pour l'en-tête du tableau */
+    color: white;
+    font-family: 'Roboto Bold', sans-serif;
+}
+
+/* Section "ligne scénario" spécifique */
+#scenario-lines-section table {
+    font-family: 'Courier New', monospace; /* Police monospace pour les données financières */
+    background-color: #F5F5F5; /* Fond des tableaux */
+}
+
+#scenario-lines-section tbody tr:nth-child(odd) {
+    background-color: #FFFFFF;
+}
+
+#scenario-lines-section tbody tr:nth-child(even) {
+    background-color: #F9F9F9; /* Alterner les couleurs de fond des lignes */
+}
+
+#scenario-lines-section tbody tr.scenario-line:hover {
+    background-color: #F0F7FF; /* Surbrillance au survol */
+}
+
+#scenario-lines-section th, #scenario-lines-section td {
+    border: 1px solid #DDDDDD; /* Bordures légères (ajoutées ici pour plus de spécificité) */
+}
+
+#scenario-lines-section td:nth-child(2), /* Colonne "Open Balance" */
+#scenario-lines-section th:nth-child(2) {
+    text-align: right;
+}
+
+#scenario-lines-section td:nth-child(3), /* Colonne "Action" */
+#scenario-lines-section th:nth-child(3) {
+    text-align: right;
+}
+
+#scenario-lines-section .total-amount,
+#scenario-lines-section .total-amount-value {
+    font-weight: bold;
+    font-size: 18px; /* Montant total en gras et taille augmentée */
+}
+
+#scenario-lines-section .total-amount-value {
+    text-align: right;
+}
+
+
+/* Styles pour les boutons */
+.button-primary, .button-secondary, .button-urgent {
+    padding: 8px 12px;
+    border-radius: 4px; /* Bordure arrondie */
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre portée légère */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    color: white; /* Texte blanc pour tous les boutons principaux */
+}
+
+.button-primary:hover, .button-secondary:hover, .button-urgent:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px); /* Léger effet au survol */
+}
+
+.button-primary {
+    background-color: #2E86AB; /* Bleu professionnel */
+}
+
+.button-primary:hover {
+    background-color: #24708F; /* Bleu plus foncé au survol */
+}
+
+.button-secondary {
+    background-color: #4CAF50; /* Vert pour actions positives/secondaires */
+}
+
+.button-secondary:hover {
+    background-color: #409143; /* Vert plus foncé au survol */
+}
+
+.button-urgent {
+    background-color: #E74C3C; /* Rouge pour actions urgentes */
+}
+
+.button-urgent:hover {
+    background-color: #C93A2B; /* Rouge plus foncé au survol */
+}
+
+/* Styles pour les prompts générés */
+.prompt-entry {
+    background-color: #F9F9F9;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 5px solid #2E86AB;
+    border-radius: 4px;
+}
+
+.prompt-entry h3 {
+    margin-top: 0;
+    color: #2E86AB;
+}
+
+.prompt-entry pre {
+    background-color: #FFFFFF;
+    padding: 10px;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    white-space: pre-wrap; /* Permet le retour à la ligne automatique pour les longs prompts */
+    word-wrap: break-word; /* S'assure que les mots longs ne débordent pas */
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+
+/* Responsive Design - Media Queries */
+
+/* Pour les écrans plus petits (ex: tablettes en mode portrait et mobiles) */
+@media (max-width: 768px) {
+    body, html {
+        font-size: 15px; /* Réduire légèrement la taille de police de base */
+    }
+
+    header, main, footer {
+        width: 95%; /* Augmenter la largeur pour utiliser plus d'espace */
+        padding: 12px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    input[type="text"],
+    textarea,
+    .button-primary, .button-secondary, .button-urgent {
+        font-size: 15px; /* Ajuster la taille de police des éléments de formulaire et boutons */
+    }
+
+    /* Tableaux en vue empilée pour petits écrans */
+    #scenario-lines-section table,
+    #scenario-lines-section thead,
+    #scenario-lines-section tbody,
+    #scenario-lines-section th,
+    #scenario-lines-section td,
+    #scenario-lines-section tr {
+        display: block; /* Fait en sorte que chaque élément de tableau soit un bloc */
+    }
+
+    #scenario-lines-section thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px; /* Cache les en-têtes de tableau originaux */
+    }
+
+    #scenario-lines-section tr {
+        border: 1px solid #DDDDDD;
+        margin-bottom: 10px;
+    }
+
+    #scenario-lines-section td {
+        border: none;
+        border-bottom: 1px solid #EEEEEE;
+        position: relative;
+        padding-left: 50%; /* Espace pour le label de la donnée */
+        text-align: right; /* Aligner le contenu à droite */
+        white-space: normal;
+    }
+
+    #scenario-lines-section td:before {
+        /* Utilise les data-label pour afficher les en-têtes de colonne */
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left; /* Aligner le label à gauche */
+        font-weight: bold;
+        color: #777777;
+    }
+
+    /* Création des labels pour chaque cellule de données */
+    #scenario-lines-section td:nth-of-type(1):before { content: "Description:"; }
+    #scenario-lines-section td:nth-of-type(2):before { content: "Open Balance:"; }
+    #scenario-lines-section td:nth-of-type(3):before { content: "Action:"; }
+
+    #scenario-lines-section td:nth-child(2), /* Colonne "Open Balance" */
+    #scenario-lines-section td:nth-child(3) { /* Colonne "Action" */
+        text-align: right; /* Maintenir l'alignement à droite pour ces colonnes */
+    }
+
+    #scenario-lines-section tfoot td {
+        padding-left: 6px; /* Pas besoin de pseudo-éléments pour le footer */
+    }
+    #scenario-lines-section .total-amount {
+        text-align: left;
+    }
+    #scenario-lines-section .total-amount-value {
+        display: block; /* Pour qu'il prenne toute la largeur après le label */
+        text-align: right;
+        margin-top: 5px;
+    }
+}
+
+/* Pour les très petits écrans (mobiles en mode portrait) */
+@media (max-width: 480px) {
+    body, html {
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    .button-primary, .button-secondary, .button-urgent {
+        padding: 10px 8px; /* Ajuster le padding pour les petits écrans */
+        width: 100%; /* Faire en sorte que les boutons prennent toute la largeur */
+        margin-bottom: 8px;
+    }
+    #scenario-lines-section td:nth-of-type(3) .button-urgent,
+    #scenario-lines-section td:nth-of-type(3) .button-secondary {
+        width: auto; /* Rétablir la largeur auto pour les boutons dans les cellules de tableau */
+        margin-bottom: 0;
+    }
+
+    #prompt-form div {
+        margin-bottom: 15px;
+    }
+}

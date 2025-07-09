@@ -1,0 +1,54 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main", "develop" ] # Déclenche sur push vers main ou develop
+  pull_request:
+    branches: [ "main", "develop" ] # Déclenche aussi sur les pull requests vers main ou develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin' # Distribution Temurin (anciennement AdoptOpenJDK)
+        cache: 'maven' # Mise en cache des dépendances Maven
+
+    - name: Build with Maven
+      run: ./mvnw clean package -DskipTests
+      # L'option -DskipTests est ajoutée pour l'instant pour accélérer le build.
+      # Pour un CI complet, on enlèverait -DskipTests et on s'assurerait que les tests passent.
+      # Alternativement, on pourrait avoir une étape de test séparée : ./mvnw test
+
+    - name: Upload JAR artifact (Optional)
+      # Cette étape est optionnelle. Elle montre comment on pourrait stocker l'artefact JAR.
+      # Utile si on veut le déployer plus tard.
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') # Uniquement sur push vers main/develop
+      uses: actions/upload-artifact@v4
+      with:
+        name: media-generator-jar
+        path: target/*.jar # Chemin vers le JAR généré (peut varier si le nom du JAR est personnalisé)
+        retention-days: 5 # Conserver l'artefact pendant 5 jours
+
+      # Note: Le chemin 'target/*.jar' est un glob pattern. S'il y a plusieurs JARs (ex: original et celui avec dépendances),
+      # il faudra peut-être être plus spécifique ou s'assurer que le JAR principal est bien celui attendu.
+      # Pour un projet Spring Boot typique, le JAR exécutable se termine souvent par .jar et non par -sources.jar ou -javadoc.jar.
+      # Le nom exact est défini dans le pom.xml <build><finalName>...</finalName> ou par défaut <artifactId>-<version>.jar.
+      # Pour ce projet, ce sera media-generator-0.0.1-SNAPSHOT.jar.
+
+# Instructions pour Jules (ou le développeur) :
+# 1. Ce workflow suppose que le projet est à la racine du dépôt.
+# 2. `./mvnw` doit être exécutable (`chmod +x mvnw` si ce n'est pas déjà le cas après checkout).
+#    GitHub Actions s'en charge généralement correctement pour les fichiers versionnés.
+# 3. La version de Java (17) et la distribution (temurin) sont spécifiées.
+# 4. Les tests sont actuellement désactivés (`-DskipTests`) dans l'étape de build pour la rapidité.
+#    Pour un CI/CD robuste, il faudrait les activer et s'assurer de leur succès.
+# 5. L'upload de l'artefact est optionnel et conditionné à un push sur les branches main ou develop.
+#    Cela permet de récupérer le JAR construit pour un déploiement manuel ou automatisé ultérieur.

@@ -1,0 +1,9 @@
+com/example/mediagenerator/model/MediaType.class
+com/example/mediagenerator/MediaGeneratorApplication.class
+com/example/mediagenerator/model/RequestStatus.class
+com/example/mediagenerator/model/TargetPlatform.class
+com/example/mediagenerator/controller/DashboardController.class
+com/example/mediagenerator/model/MediaRequest.class
+com/example/mediagenerator/service/MediaRequestService.class
+com/example/mediagenerator/repository/MediaRequestRepository.class
+com/example/mediagenerator/dto/MediaRequestDto.class

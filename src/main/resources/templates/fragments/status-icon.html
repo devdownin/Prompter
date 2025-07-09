@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="icon(statusName)">
+    <span th:switch="${statusName}">
+        <span th:case="'NOT_YET'" class="material-icons status-icon not-yet" title="Pas encore traité">hourglass_empty</span>
+        <span th:case="'GO'" class="material-icons status-icon go" title="Prêt pour traitement">play_circle_outline</span>
+        <span th:case="'RUNNING'" class="material-icons status-icon running" title="En cours de traitement">sync</span>
+        <span th:case="'SUCCESS'" class="material-icons status-icon success" title="Succès">check_circle_outline</span>
+        <span th:case="'FAIL'" class="material-icons status-icon fail" title="Échec">error_outline</span>
+        <span th:case="*" class="material-icons status-icon unknown" title="Statut inconnu">help_outline</span>
+    </span>
+</th:block>
+
+</body>
+</html>
