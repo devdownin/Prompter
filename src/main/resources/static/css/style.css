@@ -1,0 +1,312 @@
+/* Global Resets and Base Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f6f8; /* Material-like light grey background */
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Layout */
+header {
+    background-color: #3f51b5; /* Material Indigo */
+    color: white;
+    padding: 20px 40px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header h1 .material-icons {
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+main {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.07);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 30px 0;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px;
+    font-size: 0.9em;
+    color: #757575;
+}
+
+/* Typography & Headings */
+h1 {
+    font-size: 2em;
+    font-weight: 500;
+}
+
+h2 {
+    font-size: 1.6em;
+    color: #3f51b5;
+    margin-bottom: 20px;
+    font-weight: 400;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+h2 .material-icons {
+    vertical-align: middle;
+    margin-right: 10px;
+    color: #3f51b5;
+}
+
+
+/* Forms */
+.request-form div {
+    margin-bottom: 15px;
+}
+
+.request-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+}
+
+.request-form input[type="text"],
+.request-form textarea,
+.request-form select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+}
+.request-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Buttons */
+.button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none; /* For <a> styled as buttons */
+}
+.button .material-icons {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+.button:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.button.primary {
+    background-color: #3f51b5; /* Indigo */
+    color: white;
+}
+.button.primary:hover {
+    background-color: #303f9f; /* Darker Indigo */
+}
+
+.button.secondary {
+    background-color: #ffc107; /* Amber */
+    color: #333;
+}
+.button.secondary:hover {
+    background-color: #ffa000; /* Darker Amber */
+}
+
+.button.action-go {
+    background-color: #4caf50; /* Green */
+    color: white;
+}
+.button.action-go:hover {
+    background-color: #388e3c; /* Darker Green */
+}
+
+.button.action-view {
+    background-color: #03a9f4; /* Light Blue */
+    color: white;
+}
+.button.action-view:hover {
+    background-color: #0288d1; /* Darker Light Blue */
+}
+
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto; /* For responsive tables */
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+thead tr {
+    background-color: #f5f5f5; /* Light grey for header */
+}
+th {
+    font-weight: 500;
+    color: #3f51b5;
+}
+th .tooltip-icon {
+    font-size: 1em;
+    color: #757575;
+    vertical-align: middle;
+    margin-left: 4px;
+    cursor: help;
+}
+
+tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+/* Status Badges and Icons */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 12px; /* Pill shape */
+    font-size: 0.85em;
+    font-weight: 500;
+}
+.status-icon {
+    margin-right: 5px;
+    font-size: 1.1em;
+    vertical-align: middle;
+}
+
+/* Specific status colors */
+.status-badge.status-not_yet, .status-icon.not-yet { color: #757575; background-color: #e0e0e0; } /* Grey */
+.status-badge.status-go, .status-icon.go { color: white; background-color: #fb8c00; } /* Orange */
+.status-badge.status-running, .status-icon.running { color: white; background-color: #1976d2; } /* Blue */
+.status-badge.status-success, .status-icon.success { color: white; background-color: #388e3c; } /* Green */
+.status-badge.status-fail, .status-icon.fail { color: white; background-color: #d32f2f; } /* Red */
+.status-badge.status-unknown, .status-icon.unknown { color: #333; background-color: #bdbdbd; }
+
+/* Make only icon colored for statuses in table, not the whole badge */
+td .status-badge {
+    background-color: transparent;
+    padding: 0;
+}
+td .status-badge .status-icon.not-yet { color: #757575;}
+td .status-badge .status-icon.go { color: #fb8c00;}
+td .status-badge .status-icon.running { color: #1976d2;}
+td .status-badge .status-icon.success { color: #388e3c;}
+td .status-badge .status-icon.fail { color: #d32f2f;}
+td .status-badge .status-icon.unknown { color: #bdbdbd;}
+
+
+/* Error Messages */
+.error-message-inline .material-icons {
+    color: #d32f2f; /* Red */
+    vertical-align: middle;
+    cursor: help;
+}
+
+/* Flash Messages */
+.flash-message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    font-size: 1.1em;
+}
+.flash-message .material-icons {
+    margin-right: 10px;
+    font-size: 1.3em;
+}
+.flash-message.success {
+    background-color: #e8f5e9; /* Light Green */
+    color: #2e7d32; /* Dark Green */
+    border: 1px solid #a5d6a7;
+}
+.flash-message.error {
+    background-color: #ffebee; /* Light Red */
+    color: #c62828; /* Dark Red */
+    border: 1px solid #ef9a9a;
+}
+
+/* Dashboard Specific */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.dashboard-header h2 {
+    margin-bottom: 0; /* Override default h2 margin */
+    border-bottom: none;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    main {
+        margin: 10px;
+        padding: 15px;
+    }
+    header {
+        padding: 15px 20px;
+    }
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.4em; }
+
+    .request-form input[type="text"],
+    .request-form textarea,
+    .request-form select,
+    .button {
+        font-size: 0.9em;
+    }
+    .button {
+        padding: 8px 12px;
+    }
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .dashboard-header form {
+        margin-left: 0 !important;
+        margin-top: 10px;
+        width: 100%;
+    }
+    .dashboard-header form .button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    th, td {
+        padding: 8px 10px;
+    }
+    /* Pour les très petits écrans, on pourrait envisager de cacher certaines colonnes
+       ou de passer à un affichage de type "carte" pour chaque ligne.
+       Pour l'instant, on garde le tableau mais avec padding réduit. */
+}

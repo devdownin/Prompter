@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Générateur de Média</title>
+    <!-- Intégration basique de Material Icons et une police Material-like -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Placeholder pour Material 3 Web Components CSS (si utilisé via CDN) -->
+    <!-- <link href="https://path-to-material3-components.css" rel="stylesheet"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header>
+    <h1><span class="material-icons" style="font-size: 1.2em; vertical-align: middle;">dashboard</span> Tableau de Bord - Générateur de Média</h1>
+</header>
+
+<main>
+    <!-- Section pour les messages flash -->
+    <div th:if="${successMessage}" class="flash-message success">
+        <span class="material-icons">check_circle</span> <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="flash-message error">
+        <span class="material-icons">error</span> <span th:text="${errorMessage}"></span>
+    </div>
+
+    <section id="new-request-form-section">
+        <h2><span class="material-icons">add_circle_outline</span> Nouvelle Demande de Génération</h2>
+        <form th:action="@{/request/submit}" th:object="${newRequestDto}" method="post" class="request-form">
+            <div>
+                <label for="scenario">Scénario :</label>
+                <textarea id="scenario" th:field="*{scenario}" rows="5" required placeholder="Décrivez votre scénario ici..."></textarea>
+            </div>
+            <div>
+                <label for="selectedIAs">IA(s) à utiliser :</label>
+                <input type="text" id="selectedIAs" th:field="*{selectedIAs}" required placeholder="Ex: ChatGPT, Mistral, DeepSeek">
+            </div>
+            <div>
+                <label for="mediaType">Type de Média :</label>
+                <select id="mediaType" th:field="*{mediaType}" required>
+                    <option value="">-- Sélectionner --</option>
+                    <option th:each="type : ${mediaTypes}"
+                            th:value="${type}"
+                            th:text="${type.toString().substring(0,1) + type.toString().substring(1).toLowerCase()}"></option>
+                </select>
+            </div>
+            <div>
+                <label for="targetPlatform">Média Cible :</label>
+                <select id="targetPlatform" th:field="*{targetPlatform}" required>
+                    <option value="">-- Sélectionner --</option>
+                    <option th:each="platform : ${targetPlatforms}"
+                            th:value="${platform}"
+                            th:text="${platform.toString().substring(0,1) + platform.toString().substring(1).toLowerCase()}"></option>
+                </select>
+            </div>
+            <button type="submit" class="button primary"><span class="material-icons">send</span> Soumettre la Demande</button>
+        </form>
+    </section>
+
+    <hr>
+
+    <section id="requests-dashboard">
+        <div class="dashboard-header">
+            <h2><span class="material-icons">list_alt</span> Demandes en Cours</h2>
+            <form th:action="@{/requests/process}" method="post" style="display: inline-block; margin-left: 20px;">
+                <button type="submit" class="button secondary" title="Déclencher manuellement le traitement des demandes en statut 'GO'">
+                    <span class="material-icons">play_circle_filled</span> Traiter les Demandes 'GO'
+                </button>
+            </form>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th title="Identifiant unique de la demande">ID <span class="material-icons tooltip-icon">info</span></th>
+                    <th title="Extrait du scénario soumis">Scénario (Extrait) <span class="material-icons tooltip-icon">info</span></th>
+                    <th title="Intelligence(s) Artificielle(s) sélectionnée(s)">IA(s) <span class="material-icons tooltip-icon">info</span></th>
+                    <th title="Type de média à générer (Vidéo, Images, BD)">Type Média <span class="material-icons tooltip-icon">info</span></th>
+                    <th title="Plateforme pour laquelle le média sera optimisé">Média Cible <span class="material-icons tooltip-icon">info</span></th>
+                    <th title="Statut actuel de la demande">Statut <span class="material-icons tooltip-icon">info</span></th>
+                    <th title="Date de la dernière mise à jour du statut">MàJ Statut <span class="material-icons tooltip-icon">info</span></th>
+                    <th title="Actions possibles sur la demande">Actions <span class="material-icons tooltip-icon">info</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(requests)}">
+                    <td colspan="8" style="text-align: center;">Aucune demande pour le moment.</td>
+                </tr>
+                <tr th:each="req : ${requests}" th:classappend="${req.status.name().toLowerCase()}">
+                    <td th:text="${req.id}">1</td>
+                    <td th:text="${#strings.abbreviate(req.scenario, 50)}" th:title="${req.scenario}">Extrait...</td>
+                    <td th:text="${req.selectedIAs}">ChatGPT</td>
+                    <td th:text="${req.mediaType.toString().substring(0,1) + req.mediaType.toString().substring(1).toLowerCase()}">Vidéo</td>
+                    <td th:text="${req.targetPlatform.toString().substring(0,1) + req.targetPlatform.toString().substring(1).toLowerCase()}">TikTok</td>
+                    <td>
+                        <span th:classappend="'status-' + ${req.status.name().toLowerCase()}" class="status-badge">
+                            <span th:replace="~{fragments/status-icon :: icon(${req.status.name()})}"></span>
+                            <span th:text="${req.status.toString().replace('_', ' ')}">NOT YET</span>
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(req.statusUpdateDate, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
+                    <td>
+                        <form th:if="${req.status.name() == 'NOT_YET'}" th:action="@{'/request/' + ${req.id} + '/go'}" method="post" style="display: inline;">
+                            <button type="submit" class="button action-go" title="Passer la demande au statut GO pour traitement">
+                                <span class="material-icons">play_arrow</span> Go
+                            </button>
+                        </form>
+                        <a th:if="${req.status.name() == 'SUCCESS' and req.generatedMediaPath != null}"
+                           th:href="@{${req.generatedMediaPath}}" target="_blank" class="button action-view" title="Voir/Télécharger le média généré">
+                            <span class="material-icons">visibility</span> Voir
+                        </a>
+                        <span th:if="${req.status.name() == 'FAIL' and req.errorMessage != null}"
+                              class="error-message-inline"
+                              th:title="${req.errorMessage}">
+                            <span class="material-icons">warning</span> Échec
+                        </span>
+                         <!-- Autres actions possibles: Voir détails, Retraiter, Supprimer -->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; <span th:text="${#temporals.year(#temporals.now())}">2024</span> - Application Générateur de Média IA</p>
+</footer>
+
+<!-- Placeholder pour Material 3 Web Components JS (si utilisé via CDN) -->
+<!-- <script type="module" src="https://path-to-material3-components.js"></script> -->
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

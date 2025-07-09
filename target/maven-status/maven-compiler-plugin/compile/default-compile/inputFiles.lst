@@ -1,0 +1,9 @@
+/app/src/main/java/com/example/mediagenerator/MediaGeneratorApplication.java
+/app/src/main/java/com/example/mediagenerator/controller/DashboardController.java
+/app/src/main/java/com/example/mediagenerator/dto/MediaRequestDto.java
+/app/src/main/java/com/example/mediagenerator/model/MediaRequest.java
+/app/src/main/java/com/example/mediagenerator/model/MediaType.java
+/app/src/main/java/com/example/mediagenerator/model/RequestStatus.java
+/app/src/main/java/com/example/mediagenerator/model/TargetPlatform.java
+/app/src/main/java/com/example/mediagenerator/repository/MediaRequestRepository.java
+/app/src/main/java/com/example/mediagenerator/service/MediaRequestService.java
